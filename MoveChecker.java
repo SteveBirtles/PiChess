@@ -31,7 +31,7 @@ public class MoveChecker
         Node downright  = new Node(new int[]{+1, +1});
         Node downleft   = new Node(new int[]{-1, +1});
 
-        moves[0].addEdge(up); // KING
+        moves[0].addEdge(up);       // KING
         moves[0].addEdge(down);
         moves[0].addEdge(left);
         moves[0].addEdge(right);
@@ -98,9 +98,22 @@ public class MoveChecker
     {
         switch (spriteNumber)
         {
-            case 6:
+            case 6:     // KING
             case 12:
             return moves[0].getEdges();
+
+            case 5:     // QUEEN
+            case 11:
+            return moves[1].getEdges();
+
+            case 2:     //ROOK
+            case 8:
+            return moves[3].getEdges();
+
+            case 4:     //BISHOP
+            case 10:
+            return moves[5].getEdges();
+
         }
         return null;
     }
