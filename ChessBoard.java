@@ -55,6 +55,8 @@ public class ChessBoard extends JPanel implements ActionListener {
         addMouseListener(new MouseyMcMouseFace());
         setFocusable(true);
 
+        setBackground(new Color(0,0,64)); 
+
         resetBoard();
 
         timer = new Timer(16, this);
@@ -81,9 +83,9 @@ public class ChessBoard extends JPanel implements ActionListener {
         mouseX = MouseInfo.getPointerInfo().getLocation().getX() - this.getLocationOnScreen().getX();
         mouseY = MouseInfo.getPointerInfo().getLocation().getY() - this.getLocationOnScreen().getY();        
 
-        if (mouseX > 192 && mouseX < 832 && mouseY > 64 && mouseY < 704)
+        if (mouseX > 64 && mouseX < 704 && mouseY > 64 && mouseY < 704)
         {
-            cursorX = (int) (mouseX - 192) / 80;
+            cursorX = (int) (mouseX - 64) / 80;
             cursorY = (int) (mouseY - 64) / 80;
         }        
 
@@ -116,13 +118,13 @@ public class ChessBoard extends JPanel implements ActionListener {
                         g.setPaint(new Color(128,128,128));                
                 }
 
-                g.fillRect (192 + x * 80, 64 + y * 80, 80, 80);              
+                g.fillRect (64 + x * 80, 64 + y * 80, 80, 80);              
 
-                if (square[y][x] > 0) g.drawImage (sprite[square[y][x]], 192 + x * 80, 64 + y * 80, this);
+                if (square[y][x] > 0) g.drawImage (sprite[square[y][x]], 64 + x * 80, 64 + y * 80, this);
 
                 if (x == selectedX && y == selectedY)
                 {
-                    g.drawImage (sprite[0], 192 + x * 80, 64 + y * 80, this);
+                    g.drawImage (sprite[0], 64 + x * 80, 64 + y * 80, this);
                 }
 
             }
