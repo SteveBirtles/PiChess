@@ -1,0 +1,10 @@
+#BlueJ class context
+comment0.params=setValue
+comment0.target=Node(int[])
+comment1.params=target
+comment1.target=void\ addEdge(Node)
+comment2.params=
+comment2.target=java.util.ArrayList\ getEdges()
+comment3.params=
+comment3.target=int[]\ getValue()
+numComments=4

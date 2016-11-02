@@ -1,0 +1,6 @@
+#BlueJ class context
+comment0.params=
+comment0.target=MoveChecker()
+comment1.params=spriteNumber
+comment1.target=java.util.ArrayList\ getMoves(int)
+numComments=2
