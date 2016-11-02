@@ -143,9 +143,23 @@ public class ChessBoard extends JPanel implements ActionListener {
                 int[] c = n.getValue();
                 g.setPaint(new Color(255,0,0));
                 g.fillOval(94 + (x + c[1]) * 80, 94 + (y + c[0])* 80, 20, 20);
-            }
-        }
 
+                if (n.getEdges().size() > 0)
+                {
+                    Node next = n.getEdges().get(0);
+                    while (true)
+                    {
+                        c = next.getValue();
+                        g.setPaint(new Color(255,0,0));
+                        g.fillOval(94 + (x + c[1]) * 80, 94 + (y + c[0])* 80, 20, 20);
+                        if (next.getEdges().size() == 0) break; 
+                        next = next.getEdges().get(0);
+                    }
+
+                }
+            }
+
+        }
     }
 
     public void processClick()
