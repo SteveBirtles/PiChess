@@ -16,6 +16,8 @@ import java.io.File;
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 
+import java.util.ArrayList;
+
 public class ChessBoard extends JPanel implements ActionListener {
 
     private Timer timer;
@@ -95,6 +97,8 @@ public class ChessBoard extends JPanel implements ActionListener {
     @Override
     public void paintComponent(Graphics graphics) { 
 
+        MoveChecker m = new MoveChecker();
+
         super.paintComponent(graphics);
 
         Graphics2D g = (Graphics2D) graphics;
@@ -126,9 +130,22 @@ public class ChessBoard extends JPanel implements ActionListener {
                 {
                     g.drawImage (sprite[0], 64 + x * 80, 64 + y * 80, this);
                 }
-
             }
         }
+
+        if (selectedX > -1)
+        {
+            int x = selectedX;
+            int y = selectedY;
+            ArrayList<Node> allowedMoves = m.getMoves(square[y][x]);
+            for (Node n : allowedMoves)
+            {
+                int[] c = n.getValue();
+                g.setPaint(new Color(255,0,0));
+                g.fillOval(94 + (x + c[1]) * 80, 94 + (y + c[0])* 80, 20, 20);
+            }
+        }
+
     }
 
     public void processClick()
