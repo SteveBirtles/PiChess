@@ -22,14 +22,18 @@ public class MoveChecker
             moves[piece] = new Node(new int[]{0, 0});
         }
 
-        Node up         = new Node(new int[]{0, -1});
-        Node down       = new Node(new int[]{0, +1});
-        Node left       = new Node(new int[]{-1, 0});
-        Node right      = new Node(new int[]{+1, 0});
-        Node upright    = new Node(new int[]{+1, -1});
+        Node up         = new Node(new int[]{-1, 0});
+        Node down       = new Node(new int[]{+1, 0});
+        Node left       = new Node(new int[]{0, -1});
+        Node right      = new Node(new int[]{0, +1});
+        Node upright    = new Node(new int[]{-1, +1});
         Node upleft     = new Node(new int[]{-1, -1});
         Node downright  = new Node(new int[]{+1, +1});
-        Node downleft   = new Node(new int[]{-1, +1});
+        Node downleft   = new Node(new int[]{+1, -1});
+
+        moves[2].addEdge(up);       // WHITE PAWN
+
+        moves[6].addEdge(down);     // BLACK PAWN
 
         moves[0].addEdge(up);       // KING
         moves[0].addEdge(down);
@@ -51,14 +55,14 @@ public class MoveChecker
 
         for (int i = 1; i <= 7; i++)
         {
-            ups[i - 1]         = new Node(new int[]{0, -i});
-            downs[i - 1]       = new Node(new int[]{0, +i});
-            lefts[i - 1]       = new Node(new int[]{-i, 0});
-            rights[i - 1]      = new Node(new int[]{+i, 0});
-            uprights[i - 1]    = new Node(new int[]{+i, -i});
+            ups[i - 1]         = new Node(new int[]{-i, 0});
+            downs[i - 1]       = new Node(new int[]{+i, 0});
+            lefts[i - 1]       = new Node(new int[]{0, -i});
+            rights[i - 1]      = new Node(new int[]{0, +i});
+            uprights[i - 1]    = new Node(new int[]{-i, +i});
             uplefts[i - 1]     = new Node(new int[]{-i, -i});
             downrights[i - 1]  = new Node(new int[]{+i, +i});
-            downlefts[i - 1]   = new Node(new int[]{-i, +i});
+            downlefts[i - 1]   = new Node(new int[]{+i, -i});
 
             if (i > 1)
             {
@@ -92,6 +96,24 @@ public class MoveChecker
         moves[1].addEdge(downrights[0]);
         moves[1].addEdge(downlefts[0]);
 
+        Node a         = new Node(new int[]{2, 1});
+        Node b         = new Node(new int[]{2, -1});
+        Node c         = new Node(new int[]{1, 2});
+        Node d         = new Node(new int[]{1, -2});
+        Node e         = new Node(new int[]{-1, 2});
+        Node f         = new Node(new int[]{-1, -2});
+        Node g         = new Node(new int[]{-2, 1});
+        Node h         = new Node(new int[]{-2, -1});
+
+        moves[4].addEdge(a);
+        moves[4].addEdge(b);
+        moves[4].addEdge(c);
+        moves[4].addEdge(d);
+        moves[4].addEdge(e);
+        moves[4].addEdge(f);
+        moves[4].addEdge(g);
+        moves[4].addEdge(h);
+        
     }
 
     public ArrayList<Node> getMoves(int spriteNumber)
@@ -113,6 +135,16 @@ public class MoveChecker
             case 4:     //BISHOP
             case 10:
             return moves[5].getEdges();
+            
+            case 3:     //KNIGHT
+            case 9:
+            return moves[4].getEdges();
+            
+            case 1:     //WHITE PAWN
+            return moves[2].getEdges();
+            
+            case 7:     //BLACK PAWN
+            return moves[6].getEdges();
 
         }
         return null;

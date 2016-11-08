@@ -142,7 +142,11 @@ public class ChessBoard extends JPanel implements ActionListener {
             {
                 int[] c = n.getValue();
                 g.setPaint(new Color(255,0,0));
-                g.fillOval(94 + (x + c[1]) * 80, 94 + (y + c[0])* 80, 20, 20);
+
+                if (x + c[1] >= 0 && x + c[1] < 8 && y + c[0] >= 0 && y + c[0] < 8)
+                {
+                    g.fillOval(94 + (x + c[1]) * 80, 94 + (y + c[0])* 80, 20, 20);
+                }
 
                 if (n.getEdges().size() > 0)
                 {
@@ -151,7 +155,10 @@ public class ChessBoard extends JPanel implements ActionListener {
                     {
                         c = next.getValue();
                         g.setPaint(new Color(255,0,0));
-                        g.fillOval(94 + (x + c[1]) * 80, 94 + (y + c[0])* 80, 20, 20);
+                        if (x + c[1] >= 0 && x + c[1] < 8 && y + c[0] >= 0 && y + c[0] < 8)
+                        {
+                            g.fillOval(94 + (x + c[1]) * 80, 94 + (y + c[0])* 80, 20, 20);
+                        }
                         if (next.getEdges().size() == 0) break; 
                         next = next.getEdges().get(0);
                     }
@@ -164,10 +171,51 @@ public class ChessBoard extends JPanel implements ActionListener {
 
     public void processClick()
     {
-        if (selectedX > 0)
+        if (selectedX >= 0)
         {
-            square[cursorY][cursorX] = square[selectedY][selectedX];
-            square[selectedY][selectedX] = 0;
+            if (selectedX != cursorX || selectedY != cursorY)
+            {
+                boolean allowed = false;
+
+                MoveChecker m = new MoveChecker();
+                ArrayList<Node> allowedMoves = m.getMoves(square[selectedY][selectedX]);
+
+                for (Node n : allowedMoves)
+                {
+                    int[] c = n.getValue();
+                    if (selectedX + c[1] == cursorX && selectedY + c[0] == cursorY)
+                    {
+                        allowed = true;
+                    }
+
+                    if (n.getEdges().size() > 0)
+                    {
+                        Node next = n.getEdges().get(0);
+                        while (true)
+                        {
+                            c = next.getValue();                        
+                            if (selectedX + c[1] == cursorX && selectedY + c[0] == cursorY)
+                            {
+                                allowed = true;
+                            }
+                            if (next.getEdges().size() == 0) break; 
+                            next = next.getEdges().get(0);
+                        }
+                    }
+                }                
+
+                if (allowed && square[cursorY][cursorX] > 0)
+                {
+                    if (square[cursorY][cursorX] < 7 && square[selectedY][selectedX] < 7) allowed = false;
+                    if (square[cursorY][cursorX] >= 7 && square[selectedY][selectedX] >= 7) allowed = false;                    
+                }                
+                
+                if (allowed)
+                {
+                    square[cursorY][cursorX] = square[selectedY][selectedX];
+                    square[selectedY][selectedX] = 0;                
+                }
+            }
             selectedX = -1;
         }
         else
@@ -178,6 +226,7 @@ public class ChessBoard extends JPanel implements ActionListener {
                 selectedY = cursorY;                
             }
         }
+
     }
 
     class KeyboardyMcKeyboardFace extends KeyAdapter {
@@ -244,3 +293,4 @@ public class ChessBoard extends JPanel implements ActionListener {
         public void mouseExited(MouseEvent e) {}        
     }
 }
+
