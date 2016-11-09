@@ -28,6 +28,19 @@ public class ChessBoard extends JPanel implements ActionListener {
     private int selectedX = -1, selectedY;
     private double mouseX, mouseY;
 
+    public void doMove(String start, String end)
+    {
+        if (start.length() != 2 || end.length() != 2) return;
+
+        int x1 = start.charAt(0) - 65;
+        int y1 = start.charAt(1) - 48;
+        int x2 = end.charAt(0) - 65;
+        int y2 = end.charAt(1) - 48;
+
+        System.out.println("REQUEST TO MOVE (" + x1 + ", " + y1 + ") to (" + x2 + ", " + y2 + ")"); 
+
+    }
+
     public ChessBoard() 
     {
         sprite = new BufferedImage[13];
@@ -209,7 +222,7 @@ public class ChessBoard extends JPanel implements ActionListener {
                     if (square[cursorY][cursorX] < 7 && square[selectedY][selectedX] < 7) allowed = false;
                     if (square[cursorY][cursorX] >= 7 && square[selectedY][selectedX] >= 7) allowed = false;                    
                 }                
-                
+
                 if (allowed)
                 {
                     square[cursorY][cursorX] = square[selectedY][selectedX];

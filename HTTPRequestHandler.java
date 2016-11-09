@@ -17,10 +17,12 @@ import java.text.SimpleDateFormat;
 public class HTTPRequestHandler extends AbstractHandler {
 
     private StringBuilder history;
-
-    public HTTPRequestHandler()
+    private ChessBoard board;
+    
+    public HTTPRequestHandler(ChessBoard board)
     {
         history = new StringBuilder();
+        this.board = board;
     }
 
     @Override

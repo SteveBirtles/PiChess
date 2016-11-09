@@ -17,15 +17,23 @@ public class SwingFrame extends JFrame
 
         ChessBoard board = new ChessBoard();
         this.add(board);
+
+        try
+        {
+            Server server = new Server(80);
+            server.setHandler(new HTTPRequestHandler(board));
+            server.start();
+            System.out.println("Server is live on " + HTTPRequestHandler.getMyNetworkAdapter());
+        }
+        catch (Exception ex)
+        {
+            System.out.println("Sever creation failed: " + ex.getMessage());
+        }
+
     }
 
-    public static void main(String[] args) throws Exception
+    public static void main(String[] args)
     {
-
-        Server server = new Server(80);
-        server.setHandler(new HTTPRequestHandler());
-        server.start();
-        System.out.println("Server is live on " + HTTPRequestHandler.getMyNetworkAdapter());
 
         SwingUtilities.invokeLater(new Runnable() 
             {
