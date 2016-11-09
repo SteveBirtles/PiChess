@@ -1,0 +1,8 @@
+#BlueJ class context
+comment0.params=
+comment0.target=HTTPRequestHandler()
+comment1.params=target\ baseRequest\ request\ response
+comment1.target=void\ handle(java.lang.String,\ org.eclipse.jetty.server.Request,\ javax.servlet.http.HttpServletRequest,\ javax.servlet.http.HttpServletResponse)
+comment2.params=
+comment2.target=java.lang.String\ getMyNetworkAdapter()
+numComments=3
