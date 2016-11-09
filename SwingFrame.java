@@ -1,3 +1,4 @@
+import org.eclipse.jetty.server.Server;
 import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
 
@@ -18,8 +19,13 @@ public class SwingFrame extends JFrame
         this.add(board);
     }
 
-    public static void main(String[] args) 
+    public static void main(String[] args) throws Exception
     {
+
+        Server server = new Server(80);
+        server.setHandler(new HTTPRequestHandler());
+        server.start();
+        System.out.println("Server is live on " + HTTPRequestHandler.getMyNetworkAdapter());
 
         SwingUtilities.invokeLater(new Runnable() 
             {
