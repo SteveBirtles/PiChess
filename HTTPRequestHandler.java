@@ -41,19 +41,28 @@ public class HTTPRequestHandler extends AbstractHandler {
 
         if (request.getQueryString() != null)
         {
+            
+            String start = null;
+            String end = null;
+            
             for(String q : request.getQueryString().split("&"))
             {
                 if (q.contains("=")) 
                 {
                     String variable = q.split("=")[0];
                     String value = q.split("=")[1];
-                    requestText += "   " + variable + " = " + value;                                         
+                    requestText += "   " + variable + " = " + value; 
+                    
+                    if (variable.equals("start")) start = value;
+                    if (variable.equals("end")) end = value;                    
                 }
                 else               
                 {
                     requestText += "   Invalid query string component (" + q + ")";
                 }
             }
+            
+            if (start != null && end != null) board.doMove(start, end);
         }
         else
         {

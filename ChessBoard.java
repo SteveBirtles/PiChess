@@ -32,12 +32,20 @@ public class ChessBoard extends JPanel implements ActionListener {
     {
         if (start.length() != 2 || end.length() != 2) return;
 
-        int x1 = start.charAt(0) - 65;
-        int y1 = start.charAt(1) - 48;
-        int x2 = end.charAt(0) - 65;
-        int y2 = end.charAt(1) - 48;
+        int x1 = 7 - (start.charAt(0) - 65);
+        int y1 = start.charAt(1) - 49;
+        int x2 = 7 - (end.charAt(0) - 65);
+        int y2 = end.charAt(1) - 49;
 
         System.out.println("REQUEST TO MOVE (" + x1 + ", " + y1 + ") to (" + x2 + ", " + y2 + ")"); 
+
+        if (x1 < 0 || x1 > 7) return;
+        if (y1 < 0 || y1 > 7) return;
+        if (x2 < 0 || x2 > 7) return;
+        if (y2 < 0 || y2 > 7) return;
+
+        square[y2][x2] = square[y1][x1];
+        square[y1][x1] = 0;
 
     }
 
