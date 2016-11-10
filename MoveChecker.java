@@ -24,25 +24,27 @@ public class MoveChecker
 
         Node up         = new Node(new int[]{-1, 0});
         Node down       = new Node(new int[]{+1, 0});
-        Node left       = new Node(new int[]{0, -1});
-        Node right      = new Node(new int[]{0, +1});
         Node upright    = new Node(new int[]{-1, +1});
         Node upleft     = new Node(new int[]{-1, -1});
         Node downright  = new Node(new int[]{+1, +1});
         Node downleft   = new Node(new int[]{+1, -1});
 
-        moves[2].addEdge(up);       // WHITE PAWN
+        Node kingleft       = new Node(new int[]{0, -1});
+        Node kingleft2       = new Node(new int[]{0, -2});
+        kingleft.addEdge(kingleft2);
 
-        moves[6].addEdge(down);     // BLACK PAWN
+        Node kingright      = new Node(new int[]{0, +1});
+        Node kingright2      = new Node(new int[]{0, +2});
+        kingright.addEdge(kingright2);
 
         moves[0].addEdge(up);       // KING
         moves[0].addEdge(down);
-        moves[0].addEdge(left);
-        moves[0].addEdge(right);
         moves[0].addEdge(upright);
         moves[0].addEdge(upleft);
         moves[0].addEdge(downright);
         moves[0].addEdge(downleft);
+        moves[0].addEdge(kingleft);
+        moves[0].addEdge(kingright);
 
         Node[] ups = new Node[7];
         Node[] downs = new Node[7];
@@ -113,7 +115,23 @@ public class MoveChecker
         moves[4].addEdge(f);
         moves[4].addEdge(g);
         moves[4].addEdge(h);
-        
+
+        Node pawnup         = new Node(new int[]{-1, 0});
+        Node pawnup2         = new Node(new int[]{-2, 0});
+        pawnup.addEdge(pawnup2);
+
+        Node pawndown       = new Node(new int[]{+1, 0});        
+        Node pawndown2       = new Node(new int[]{+2, 0});
+        pawndown.addEdge(pawndown2);        
+
+        moves[2].addEdge(pawnup);       // WHITE PAWN
+        moves[2].addEdge(upleft);      
+        moves[2].addEdge(upright);      
+
+        moves[6].addEdge(pawndown);     // BLACK PAWN
+        moves[6].addEdge(downleft);      
+        moves[6].addEdge(downright);      
+
     }
 
     public ArrayList<Node> getMoves(int spriteNumber)
@@ -135,14 +153,14 @@ public class MoveChecker
             case 4:     //BISHOP
             case 10:
             return moves[5].getEdges();
-            
+
             case 3:     //KNIGHT
             case 9:
             return moves[4].getEdges();
-            
+
             case 1:     //WHITE PAWN
             return moves[2].getEdges();
-            
+
             case 7:     //BLACK PAWN
             return moves[6].getEdges();
 
