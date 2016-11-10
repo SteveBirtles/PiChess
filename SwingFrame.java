@@ -5,6 +5,8 @@ import javax.swing.SwingUtilities;
 public class SwingFrame extends JFrame 
 {
 
+    public static String opponent = null;
+
     public SwingFrame() 
     {
         this.setSize(1280, 1024);
@@ -34,6 +36,8 @@ public class SwingFrame extends JFrame
 
     public static void main(String[] args)
     {
+
+        if (args.length > 0) opponent= args[0];
 
         SwingUtilities.invokeLater(new Runnable() 
             {

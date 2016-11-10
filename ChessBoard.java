@@ -18,6 +18,9 @@ import java.awt.image.BufferedImage;
 
 import java.util.ArrayList;
 
+import java.net.HttpURLConnection;
+import java.net.URL;
+
 public class ChessBoard extends JPanel implements ActionListener {
 
     private Timer timer;
@@ -240,7 +243,30 @@ public class ChessBoard extends JPanel implements ActionListener {
                 if (allowed)
                 {
                     square[cursorY][cursorX] = square[selectedY][selectedX];
-                    square[selectedY][selectedX] = 0;                
+                    square[selectedY][selectedX] = 0;     
+
+                    if (SwingFrame.opponent != null)
+                    {
+
+                        String columns[] = new String[] {"A", "B", "C", "D", "E", "F", "G", "H"};  
+                        String rows[] = new String[] {"8", "7", "6", "5", "4", "3", "2", "1"};
+
+                        String start = columns[selectedX] + rows[selectedY];
+                        String end = columns[cursorX] + rows[cursorY];
+
+                        try
+                        {
+                            URL url = new URL( "http://" + SwingFrame.opponent + "/move?start=" + start + "&end=" + end );                        
+                            HttpURLConnection con = (HttpURLConnection) url.openConnection();
+                            con.setRequestMethod("GET");
+                            int responseCode = con.getResponseCode();
+                            System.out.println("HTTP GET URL: " + url + ", Response Code: " + responseCode);
+                        }
+                        catch (Exception ex)
+                        {
+                            System.out.println("HTTP GET ERROR: " + ex.getMessage());
+                        }
+                    }
                 }
             }
             selectedX = -1;

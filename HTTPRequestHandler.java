@@ -16,12 +16,10 @@ import java.text.SimpleDateFormat;
 
 public class HTTPRequestHandler extends AbstractHandler {
 
-    private StringBuilder history;
     private ChessBoard board;
-    
+
     public HTTPRequestHandler(ChessBoard board)
     {
-        history = new StringBuilder();
         this.board = board;
     }
 
@@ -41,10 +39,10 @@ public class HTTPRequestHandler extends AbstractHandler {
 
         if (request.getQueryString() != null)
         {
-            
+
             String start = null;
             String end = null;
-            
+
             for(String q : request.getQueryString().split("&"))
             {
                 if (q.contains("=")) 
@@ -52,7 +50,7 @@ public class HTTPRequestHandler extends AbstractHandler {
                     String variable = q.split("=")[0];
                     String value = q.split("=")[1];
                     requestText += "   " + variable + " = " + value; 
-                    
+
                     if (variable.equals("start")) start = value;
                     if (variable.equals("end")) end = value;                    
                 }
@@ -61,7 +59,7 @@ public class HTTPRequestHandler extends AbstractHandler {
                     requestText += "   Invalid query string component (" + q + ")";
                 }
             }
-            
+
             if (start != null && end != null) board.doMove(start, end);
         }
         else
@@ -69,18 +67,8 @@ public class HTTPRequestHandler extends AbstractHandler {
             requestText += "   No query string supplied";
         }
         System.out.println(requestText);
-        history.append("<p>" + requestText + "</p>");
 
-        StringBuilder responseText = new StringBuilder();
-        responseText.append("<!DOCTYPE html>\n");
-        responseText.append("<html>\n");
-        responseText.append("<body>\n");
-        responseText.append("<h1>Welcome to my tiny Java web server!</h1>\n");
-        responseText.append("<hr /><h3>Messages recived so far:</h3>\n");
-        responseText.append(history);           
-        responseText.append("</body>\n");
-        responseText.append("</html>\n");        
-        response.getWriter().println(responseText);
+        response.getWriter().println(requestText);
 
         baseRequest.setHandled(true);
     }
@@ -107,14 +95,4 @@ public class HTTPRequestHandler extends AbstractHandler {
         }
         return null;
     }
-
-    /*public static void main(String[] args) throws Exception {
-        Server server = new Server(80);
-        server.setHandler(new HTTPRequestHandler());
-        server.start();
-        System.out.println("Server is live on " + getMyNetworkAdapter());
-        System.out.println("Close with CTRL+SHIFT+R in BlueJ main window or CTRL+C on command line.");
-        System.out.println("-----------------------------------------------------------------------");      
-        server.join();
-    }*/
 }
