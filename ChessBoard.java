@@ -27,6 +27,7 @@ public class ChessBoard extends JPanel implements ActionListener {
 
     private BufferedImage[] sprite;
     private int[][] square;
+    private int[][] moves;
     private int cursorX = 0, cursorY = 0;
     private int selectedX = -1, selectedY;
     private double mouseX, mouseY;
@@ -107,6 +108,8 @@ public class ChessBoard extends JPanel implements ActionListener {
         square[5] = new int[]{0, 0, 0, 0, 0, 0, 0, 0};
         square[6] = new int[]{1, 1, 1, 1, 1, 1, 1, 1};
         square[7] = new int[]{2, 3, 4, 5, 6, 4, 3, 2};
+
+        moves = new int[8][8];
     }
 
     @Override
@@ -115,12 +118,74 @@ public class ChessBoard extends JPanel implements ActionListener {
         mouseX = MouseInfo.getPointerInfo().getLocation().getX() - this.getLocationOnScreen().getX();
         mouseY = MouseInfo.getPointerInfo().getLocation().getY() - this.getLocationOnScreen().getY();        
 
-        if (mouseX > 64 && mouseX < 704 && mouseY > 64 && mouseY < 704)
-        {
+        if (mouseX > 64 && mouseX < 704 && mouseY > 64 && mouseY < 704) {
             cursorX = (int) (mouseX - 64) / 80;
             cursorY = (int) (mouseY - 64) / 80;
         }        
 
+        for (int x = 0; x < 8; x++) {
+            for (int y = 0; y < 8; y++) {
+                moves[y][x] = -1;
+            }
+        }
+
+        if (selectedX > -1)
+        {
+            MoveChecker m = new MoveChecker();
+            ArrayList<Node> allowedMoves = m.getMoves(square[selectedY][selectedX]);
+
+            for (Node n : allowedMoves) {
+                boolean last = false, jumpking = false;
+                int[] c = n.getValue();
+                int x = selectedX + c[1];
+                int y = selectedY + c[0];
+
+                if (x >= 0 && y >= 0 && x < 8 && y < 8) {
+                    moves[y][x] = c[2];
+                    if (square[y][x] == 0 && moves[y][x] == 1 ) moves[y][x] = -1;
+                    if (square[y][x] > 0) {
+                        if ( moves[y][x] == 3 ) moves[y][x] = -1;
+                        if ( square[y][x] < 7 && square[selectedY][selectedX] < 7 ) moves[y][x] = -1;       
+                        if ( square[y][x] >= 7 && square[selectedY][selectedX] >= 7 ) moves[y][x] = -1; 
+                        if (( square[selectedY][selectedX] == 2 && square[y][x] == 6 ) || 
+                        ( square[selectedY][selectedX] == 8 && square[y][x] == 12 )) { jumpking = true; }
+                        else { last = true; }
+                    }
+                }
+
+                if (last) continue;
+
+                if (n.getEdges().size() > 0) {
+                    Node next = n.getEdges().get(0);
+                    while (true) {
+                        c = next.getValue();            
+                        int xx = selectedX + c[1];
+                        int yy = selectedY + c[0];
+                        if (xx >= 0 && yy >= 0 && xx < 8 && yy < 8) {
+                            moves[yy][xx] = c[2];    
+                            if (square[yy][xx] == 0 && moves[yy][xx] == 1 ) moves[yy][xx] = -1;
+                            if (square[yy][xx] > 0) {
+                                if ( moves[yy][xx] == 3 ) moves[yy][xx] = -1;
+                                if ( square[yy][xx] < 7 && square[selectedY][selectedX] < 7 ) moves[yy][xx] = -1;                             
+                                if ( square[yy][xx] >= 7 && square[selectedY][selectedX] >= 7 ) moves[yy][xx] = -1; 
+                                if (( square[selectedY][selectedX] == 2 && square[yy][xx] == 6 ) || 
+                                ( square[selectedY][selectedX] == 8 && square[yy][xx] == 12 )) {
+                                    if (next.getEdges().size() == 0) break; 
+                                    next = next.getEdges().get(0);   
+                                    c = next.getValue();            
+                                    xx = selectedX + c[1];
+                                    yy = selectedY + c[0];
+                                    if (xx >= 0 && yy >= 0 && xx < 8 && yy < 8 && square[yy][xx] == 0) moves[yy][xx] = c[2];
+                                }                                
+                                last = true;
+                            }                            
+                        }
+                        if (last || jumpking || next.getEdges().size() == 0) break; 
+                        next = next.getEdges().get(0);                       
+                    }                    
+                }
+            }
+        }
         repaint();
     }
 
@@ -160,42 +225,22 @@ public class ChessBoard extends JPanel implements ActionListener {
                 {
                     g.drawImage (sprite[0], 64 + x * 80, 64 + y * 80, this);
                 }
-            }
-        }
 
-        if (selectedX > -1)
-        {
-            int x = selectedX;
-            int y = selectedY;
-            ArrayList<Node> allowedMoves = m.getMoves(square[y][x]);
-            for (Node n : allowedMoves)
-            {
-                int[] c = n.getValue();
-                g.setPaint(new Color(255,0,0));
-
-                if (x + c[1] >= 0 && x + c[1] < 8 && y + c[0] >= 0 && y + c[0] < 8)
+                if (moves[y][x] >= 0)
                 {
-                    g.fillOval(94 + (x + c[1]) * 80, 94 + (y + c[0])* 80, 20, 20);
-                }
 
-                if (n.getEdges().size() > 0)
-                {
-                    Node next = n.getEdges().get(0);
-                    while (true)
+                    switch (moves[y][x])
                     {
-                        c = next.getValue();
-                        g.setPaint(new Color(255,0,0));
-                        if (x + c[1] >= 0 && x + c[1] < 8 && y + c[0] >= 0 && y + c[0] < 8)
-                        {
-                            g.fillOval(94 + (x + c[1]) * 80, 94 + (y + c[0])* 80, 20, 20);
-                        }
-                        if (next.getEdges().size() == 0) break; 
-                        next = next.getEdges().get(0);
+                        case 0: g.setPaint(new Color(0,255,0)); break;
+                        case 1: g.setPaint(new Color(255,0,0)); break;
+                        case 2: g.setPaint(new Color(0,0,255)); break;
+                        case 3: g.setPaint(new Color(0,255,255)); break;
+                        case 4: g.setPaint(new Color(255,0,255)); break;
                     }
 
+                    g.fillOval(94 + x * 80, 94 + y * 80, 20, 20);
                 }
             }
-
         }
     }
 
@@ -205,42 +250,8 @@ public class ChessBoard extends JPanel implements ActionListener {
         {
             if (selectedX != cursorX || selectedY != cursorY)
             {
-                boolean allowed = false;
 
-                MoveChecker m = new MoveChecker();
-                ArrayList<Node> allowedMoves = m.getMoves(square[selectedY][selectedX]);
-
-                for (Node n : allowedMoves)
-                {
-                    int[] c = n.getValue();
-                    if (selectedX + c[1] == cursorX && selectedY + c[0] == cursorY)
-                    {
-                        allowed = true;
-                    }
-
-                    if (n.getEdges().size() > 0)
-                    {
-                        Node next = n.getEdges().get(0);
-                        while (true)
-                        {
-                            c = next.getValue();                        
-                            if (selectedX + c[1] == cursorX && selectedY + c[0] == cursorY)
-                            {
-                                allowed = true;
-                            }
-                            if (next.getEdges().size() == 0) break; 
-                            next = next.getEdges().get(0);
-                        }
-                    }
-                }                
-
-                if (allowed && square[cursorY][cursorX] > 0)
-                {
-                    if (square[cursorY][cursorX] < 7 && square[selectedY][selectedX] < 7) allowed = false;
-                    if (square[cursorY][cursorX] >= 7 && square[selectedY][selectedX] >= 7) allowed = false;                    
-                }                
-
-                if (allowed)
+                if (moves[cursorY][cursorX] >= 0)
                 {
                     square[cursorY][cursorX] = square[selectedY][selectedX];
                     square[selectedY][selectedX] = 0;     

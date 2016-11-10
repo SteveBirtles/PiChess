@@ -13,28 +13,36 @@ public class MoveChecker
      * 6 black pawn (sprite 7)
      */
 
+    /* INDEX OF MOVE TYPES
+     * 0 not special
+     * 1 capture only
+     * 2 first move only
+     * 3 not capture
+     * 4 castling
+     */
+
     private Node[] moves = new Node[7];
 
     public MoveChecker()
     {
         for (int piece = 0; piece < 7; piece++)
         {
-            moves[piece] = new Node(new int[]{0, 0});
+            moves[piece] = new Node(new int[]{0, 0, 0});
         }
 
-        Node up         = new Node(new int[]{-1, 0});
-        Node down       = new Node(new int[]{+1, 0});
-        Node upright    = new Node(new int[]{-1, +1});
-        Node upleft     = new Node(new int[]{-1, -1});
-        Node downright  = new Node(new int[]{+1, +1});
-        Node downleft   = new Node(new int[]{+1, -1});
+        Node up         = new Node(new int[]{-1, 0, 0});
+        Node down       = new Node(new int[]{+1, 0, 0});
+        Node upright    = new Node(new int[]{-1, +1, 0});
+        Node upleft     = new Node(new int[]{-1, -1, 0});
+        Node downright  = new Node(new int[]{+1, +1, 0});
+        Node downleft   = new Node(new int[]{+1, -1, 0});
 
-        Node kingleft       = new Node(new int[]{0, -1});
-        Node kingleft2       = new Node(new int[]{0, -2});
+        Node kingleft       = new Node(new int[]{0, -1, 0});
+        Node kingleft2       = new Node(new int[]{0, -2, 4});
         kingleft.addEdge(kingleft2);
 
-        Node kingright      = new Node(new int[]{0, +1});
-        Node kingright2      = new Node(new int[]{0, +2});
+        Node kingright      = new Node(new int[]{0, +1, 0});
+        Node kingright2      = new Node(new int[]{0, +2, 4});
         kingright.addEdge(kingright2);
 
         moves[0].addEdge(up);       // KING
@@ -57,14 +65,14 @@ public class MoveChecker
 
         for (int i = 1; i <= 7; i++)
         {
-            ups[i - 1]         = new Node(new int[]{-i, 0});
-            downs[i - 1]       = new Node(new int[]{+i, 0});
-            lefts[i - 1]       = new Node(new int[]{0, -i});
-            rights[i - 1]      = new Node(new int[]{0, +i});
-            uprights[i - 1]    = new Node(new int[]{-i, +i});
-            uplefts[i - 1]     = new Node(new int[]{-i, -i});
-            downrights[i - 1]  = new Node(new int[]{+i, +i});
-            downlefts[i - 1]   = new Node(new int[]{+i, -i});
+            ups[i - 1]         = new Node(new int[]{-i, 0, 0});
+            downs[i - 1]       = new Node(new int[]{+i, 0, 0});
+            lefts[i - 1]       = new Node(new int[]{0, -i, 0});
+            rights[i - 1]      = new Node(new int[]{0, +i, 0});
+            uprights[i - 1]    = new Node(new int[]{-i, +i, 0});
+            uplefts[i - 1]     = new Node(new int[]{-i, -i, 0});
+            downrights[i - 1]  = new Node(new int[]{+i, +i, 0});
+            downlefts[i - 1]   = new Node(new int[]{+i, -i, 0});
 
             if (i > 1)
             {
@@ -98,14 +106,14 @@ public class MoveChecker
         moves[1].addEdge(downrights[0]);
         moves[1].addEdge(downlefts[0]);
 
-        Node a         = new Node(new int[]{2, 1});
-        Node b         = new Node(new int[]{2, -1});
-        Node c         = new Node(new int[]{1, 2});
-        Node d         = new Node(new int[]{1, -2});
-        Node e         = new Node(new int[]{-1, 2});
-        Node f         = new Node(new int[]{-1, -2});
-        Node g         = new Node(new int[]{-2, 1});
-        Node h         = new Node(new int[]{-2, -1});
+        Node a         = new Node(new int[]{2, 1, 0});
+        Node b         = new Node(new int[]{2, -1, 0});
+        Node c         = new Node(new int[]{1, 2, 0});
+        Node d         = new Node(new int[]{1, -2, 0});
+        Node e         = new Node(new int[]{-1, 2, 0});
+        Node f         = new Node(new int[]{-1, -2, 0});
+        Node g         = new Node(new int[]{-2, 1, 0});
+        Node h         = new Node(new int[]{-2, -1, 0});
 
         moves[4].addEdge(a);
         moves[4].addEdge(b);
@@ -116,21 +124,25 @@ public class MoveChecker
         moves[4].addEdge(g);
         moves[4].addEdge(h);
 
-        Node pawnup         = new Node(new int[]{-1, 0});
-        Node pawnup2         = new Node(new int[]{-2, 0});
-        pawnup.addEdge(pawnup2);
+        Node pawnup         = new Node(new int[]{-1, 0, 3});
+        Node pawnup2         = new Node(new int[]{-2, 0, 2});
+        Node pawnupright    = new Node(new int[]{-1, +1, 1});
+        Node pawnupleft     = new Node(new int[]{-1, -1, 1});
 
-        Node pawndown       = new Node(new int[]{+1, 0});        
-        Node pawndown2       = new Node(new int[]{+2, 0});
-        pawndown.addEdge(pawndown2);        
+        Node pawndown       = new Node(new int[]{+1, 0, 3});        
+        Node pawndown2       = new Node(new int[]{+2, 0, 2});
+        Node pawndownright  = new Node(new int[]{+1, +1, 1});
+        Node pawndownleft   = new Node(new int[]{+1, -1, 1});
 
         moves[2].addEdge(pawnup);       // WHITE PAWN
-        moves[2].addEdge(upleft);      
-        moves[2].addEdge(upright);      
+        pawnup.addEdge(pawnup2);
+        moves[2].addEdge(pawnupleft);      
+        moves[2].addEdge(pawnupright);      
 
         moves[6].addEdge(pawndown);     // BLACK PAWN
-        moves[6].addEdge(downleft);      
-        moves[6].addEdge(downright);      
+        pawndown.addEdge(pawndown2);        
+        moves[6].addEdge(pawndownleft);      
+        moves[6].addEdge(pawndownright);      
 
     }
 

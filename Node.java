@@ -1,6 +1,7 @@
 import java.util.ArrayList;
 
-public class Node {
+public class Node 
+{
 
     private int[] value;
 

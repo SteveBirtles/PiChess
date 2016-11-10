@@ -22,7 +22,7 @@ public class SwingFrame extends JFrame
 
         try
         {
-            Server server = new Server(80);
+            Server server = new Server(8080);
             server.setHandler(new HTTPRequestHandler(board));
             server.start();
             System.out.println("Server is live on " + HTTPRequestHandler.getMyNetworkAdapter());
