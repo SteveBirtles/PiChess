@@ -15,10 +15,12 @@ public class MoveChecker
 
     /* INDEX OF MOVE TYPES
      * 0 not special
-     * 1 capture only
-     * 2 first move only and not capture
-     * 3 not capture
-     * 4 castling
+     * 1 capture only (pawn)
+     * 2 first move only and not capture (pawn)
+     * 3 not capture (pawn)
+     * 4 castling (king)
+     * 5 castling (rook)
+     * 6 en passant (pawn)
      */
 
     private Node[] moves = new Node[7];

@@ -33,6 +33,7 @@ public class ChessBoard extends JPanel implements ActionListener {
     private int selectedX = -1, selectedY;
     private double mouseX, mouseY;
     private boolean showcoords;
+    private int[] lastMoved = null;
 
     private String columns[] = new String[] {"A", "B", "C", "D", "E", "F", "G", "H"};  
     private String rows[] = new String[] {"8", "7", "6", "5", "4", "3", "2", "1"};
@@ -79,6 +80,7 @@ public class ChessBoard extends JPanel implements ActionListener {
         square[y2][x2] = square[y1][x1];
         square[y1][x1] = 0;
         unmoved[y1][x1] = false;
+        lastMoved = new int[]{x1, y1, x2, y2};
 
     }
 
@@ -171,7 +173,32 @@ public class ChessBoard extends JPanel implements ActionListener {
 
                 if (x >= 0 && y >= 0 && x < 8 && y < 8) {
                     moves[y][x] = c[2];
-                    if (square[y][x] == 0 && moves[y][x] == 1) moves[y][x] = -1;
+
+                    if (moves[y][x] == 1) {    
+                        boolean enPassant = false;
+                        if ( lastMoved != null ) {
+                            if ( square[lastMoved[3]][lastMoved[2]] == 1 ) {
+                                if ( lastMoved[1] == lastMoved[3] + 2 ) {
+                                    if ( lastMoved[2] == x && lastMoved[3] == y - 1 ) {
+                                        enPassant = true;  
+                                        moves[y][x] = 6;
+                                    }
+                                }
+                            }
+                            if ( square[lastMoved[3]][lastMoved[2]] == 7 ) {
+                                if ( lastMoved[1] == lastMoved[3] - 2 ) {
+                                    if ( lastMoved[2] == x && lastMoved[3] == y + 1 ) {
+                                        enPassant = true;
+                                        moves[y][x] = 6;
+                                    }
+                                }
+                            }
+                        }
+                        if (!enPassant && square[y][x] == 0) {
+                            moves[y][x] = -1;
+                        }
+                    }
+
                     if (!unmoved[selectedY][selectedX] && (moves[y][x] == 2 || moves[y][x] == 4)) moves[y][x] = -1;
                     if (square[y][x] > 0) {
                         if ( moves[y][x] == 2 || moves[y][x] == 3 ) moves[y][x] = -1;
@@ -192,8 +219,8 @@ public class ChessBoard extends JPanel implements ActionListener {
                         int xx = selectedX + c[1];
                         int yy = selectedY + c[0];
                         if (xx >= 0 && yy >= 0 && xx < 8 && yy < 8) {
-                            moves[yy][xx] = c[2];    
-                            if (square[yy][xx] == 0 && moves[yy][xx] == 1 ) moves[yy][xx] = -1;
+                            moves[yy][xx] = c[2];
+                            if (jumpking) moves[yy][xx] = 5;
                             if (!unmoved[selectedY][selectedX] && (moves[yy][xx] == 2 || moves[yy][xx] == 4 || jumpking)) moves[yy][xx] = -1;
                             if (square[yy][xx] > 0) {
                                 if (moves[yy][xx] == 2 || moves[yy][xx] == 3 ) moves[yy][xx] = -1;
@@ -275,12 +302,21 @@ public class ChessBoard extends JPanel implements ActionListener {
                     case 4: g.setPaint(new Color(255,0,255)); break;
                     }*/
 
-                    if (square[y][x] == 0) g.setPaint(new Color(0,255,0));
-                    else g.setPaint(new Color(255,0,0));
+                    if (square[y][x] != 0 || moves[y][x] == 6) g.setPaint(new Color(255,0,0));
+                    else if (moves[y][x] == 4 || moves[y][x] == 5) g.setPaint(new Color(0,0,255));
+                    else g.setPaint(new Color(0,255,0));
                     g.fillOval(350 + x * 80, 94 + y * 80, 20, 20);
                 }               
             }
         }
+
+        /*if (lastMoved != null)
+        {
+        g.setPaint(new Color(255,255,0));
+        g.fillOval(350 + lastMoved[0] * 80, 94 + lastMoved[1] * 80, 20, 20);        
+        g.fillOval(350 + lastMoved[2] * 80, 94 + lastMoved[3] * 80, 20, 20);        
+        }*/
+
     }
 
     public void forceSync()
@@ -329,6 +365,12 @@ public class ChessBoard extends JPanel implements ActionListener {
                     square[cursorY][cursorX] = square[selectedY][selectedX];
                     square[selectedY][selectedX] = 0;     
                     unmoved[selectedY][selectedX] = false;
+                    if (moves[cursorY][cursorX] == 6)
+                    {
+                        if (square[cursorY][cursorX] == 1) square[cursorY + 1][cursorX] = 0;
+                        if (square[cursorY][cursorX] == 7) square[cursorY - 1][cursorX] = 0;
+                    }
+                    lastMoved = new int[]{selectedX, selectedY, cursorX, cursorY};
 
                     if (SwingFrame.opponent != null)
                     {                        
@@ -342,6 +384,20 @@ public class ChessBoard extends JPanel implements ActionListener {
                             con.setRequestMethod("GET");
                             int responseCode = con.getResponseCode();
                             System.out.println("HTTP GET URL: " + url + ", Response Code: " + responseCode);
+
+                            if (moves[cursorY][cursorX] == 6)
+                            {
+                                String position = null;
+                                if (square[cursorY][cursorX] == 1) position = columns[cursorX] + rows[cursorY + 1];
+                                if (square[cursorY][cursorX] == 7) position = columns[cursorX] + rows[cursorY - 1];                                
+
+                                new URL( "http://" + SwingFrame.opponent + "/move?position=" + position + "&value=0&unmoved=false" );
+                                con = (HttpURLConnection) url.openConnection();
+                                con.setRequestMethod("GET");
+                                responseCode = con.getResponseCode();
+                                System.out.println("HTTP GET URL: " + url + ", Response Code: " + responseCode);
+                            }
+
                         }
                         catch (Exception ex)
                         {
