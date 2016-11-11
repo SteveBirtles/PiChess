@@ -1,6 +1,12 @@
 import org.eclipse.jetty.server.Server;
 import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
+import java.awt.image.BufferedImage;
+import java.awt.Cursor;
+import java.awt.Point;
+import java.awt.Toolkit;
+import java.io.File;
+import javax.imageio.ImageIO;
 
 public class SwingFrame extends JFrame 
 {
@@ -16,6 +22,13 @@ public class SwingFrame extends JFrame
         this.setDefaultCloseOperation(EXIT_ON_CLOSE);
         this.setLocationRelativeTo(null);       
         this.setVisible(true);
+
+        BufferedImage cursorImg = null;
+        try { cursorImg = ImageIO.read(new File("cursor.png")); }       
+        catch (Exception ex) { System.out.println(ex.getMessage()); }
+
+        Cursor blankCursor = Toolkit.getDefaultToolkit().createCustomCursor(cursorImg, new Point(0, 0), "blank cursor");
+        this.getContentPane().setCursor(blankCursor);
 
         ChessBoard board = new ChessBoard();
         this.add(board);
