@@ -16,7 +16,7 @@ public class MoveChecker
     /* INDEX OF MOVE TYPES
      * 0 not special
      * 1 capture only
-     * 2 first move only
+     * 2 first move only and not capture
      * 3 not capture
      * 4 castling
      */

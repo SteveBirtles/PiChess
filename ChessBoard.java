@@ -28,6 +28,7 @@ public class ChessBoard extends JPanel implements ActionListener {
     private BufferedImage[] sprite;
     private int[][] square;
     private int[][] moves;
+    private boolean[][] unmoved;
     private int cursorX = 0, cursorY = 0;
     private int selectedX = -1, selectedY;
     private double mouseX, mouseY;
@@ -56,6 +57,7 @@ public class ChessBoard extends JPanel implements ActionListener {
 
         square[y2][x2] = square[y1][x1];
         square[y1][x1] = 0;
+        unmoved[y1][x1] = false;
 
     }
 
@@ -110,6 +112,12 @@ public class ChessBoard extends JPanel implements ActionListener {
         square[7] = new int[]{2, 3, 4, 5, 6, 4, 3, 2};
 
         moves = new int[8][8];
+        unmoved = new boolean[8][8];
+        for (int x = 0; x < 8; x++) {
+            for (int y = 0; y < 8; y++) {
+                if (square[y][x] > 0) unmoved[y][x] = true;
+            }
+        }
     }
 
     @Override
@@ -142,9 +150,10 @@ public class ChessBoard extends JPanel implements ActionListener {
 
                 if (x >= 0 && y >= 0 && x < 8 && y < 8) {
                     moves[y][x] = c[2];
-                    if (square[y][x] == 0 && moves[y][x] == 1 ) moves[y][x] = -1;
+                    if (square[y][x] == 0 && moves[y][x] == 1) moves[y][x] = -1;
+                    if (!unmoved[selectedY][selectedX] && (moves[y][x] == 2 || moves[y][x] == 4)) moves[y][x] = -1;
                     if (square[y][x] > 0) {
-                        if ( moves[y][x] == 3 ) moves[y][x] = -1;
+                        if ( moves[y][x] == 2 || moves[y][x] == 3 ) moves[y][x] = -1;
                         if ( square[y][x] < 7 && square[selectedY][selectedX] < 7 ) moves[y][x] = -1;       
                         if ( square[y][x] >= 7 && square[selectedY][selectedX] >= 7 ) moves[y][x] = -1; 
                         if (( square[selectedY][selectedX] == 2 && square[y][x] == 6 ) || 
@@ -164,10 +173,11 @@ public class ChessBoard extends JPanel implements ActionListener {
                         if (xx >= 0 && yy >= 0 && xx < 8 && yy < 8) {
                             moves[yy][xx] = c[2];    
                             if (square[yy][xx] == 0 && moves[yy][xx] == 1 ) moves[yy][xx] = -1;
+                            if (!unmoved[selectedY][selectedX] && (moves[yy][xx] == 2 || moves[yy][xx] == 4 || jumpking)) moves[yy][xx] = -1;
                             if (square[yy][xx] > 0) {
-                                if ( moves[yy][xx] == 3 ) moves[yy][xx] = -1;
-                                if ( square[yy][xx] < 7 && square[selectedY][selectedX] < 7 ) moves[yy][xx] = -1;                             
-                                if ( square[yy][xx] >= 7 && square[selectedY][selectedX] >= 7 ) moves[yy][xx] = -1; 
+                                if (moves[yy][xx] == 2 || moves[yy][xx] == 3 ) moves[yy][xx] = -1;
+                                if (square[yy][xx] < 7 && square[selectedY][selectedX] < 7 ) moves[yy][xx] = -1;                             
+                                if (square[yy][xx] >= 7 && square[selectedY][selectedX] >= 7 ) moves[yy][xx] = -1; 
                                 if (( square[selectedY][selectedX] == 2 && square[yy][xx] == 6 ) || 
                                 ( square[selectedY][selectedX] == 8 && square[yy][xx] == 12 )) {
                                     if (next.getEdges().size() == 0) break; 
@@ -229,17 +239,25 @@ public class ChessBoard extends JPanel implements ActionListener {
                 if (moves[y][x] >= 0)
                 {
 
-                    switch (moves[y][x])
+                    /*switch (moves[y][x])
                     {
-                        case 0: g.setPaint(new Color(0,255,0)); break;
-                        case 1: g.setPaint(new Color(255,0,0)); break;
-                        case 2: g.setPaint(new Color(0,0,255)); break;
-                        case 3: g.setPaint(new Color(0,255,255)); break;
-                        case 4: g.setPaint(new Color(255,0,255)); break;
-                    }
+                    case 0: g.setPaint(new Color(0,255,0)); break;
+                    case 1: g.setPaint(new Color(255,0,0)); break;
+                    case 2: g.setPaint(new Color(0,0,255)); break;
+                    case 3: g.setPaint(new Color(0,255,255)); break;
+                    case 4: g.setPaint(new Color(255,0,255)); break;
+                    }*/
 
+                    if (square[y][x] == 0) g.setPaint(new Color(0,255,0));
+                    else g.setPaint(new Color(255,0,0));
                     g.fillOval(94 + x * 80, 94 + y * 80, 20, 20);
                 }
+
+                /*if (unmoved[y][x])
+                {
+                g.setPaint(new Color(255,255,0));                     
+                g.fillOval(94 + x * 80, 94 + y * 80, 20, 20);
+                }*/
             }
         }
     }
@@ -255,6 +273,7 @@ public class ChessBoard extends JPanel implements ActionListener {
                 {
                     square[cursorY][cursorX] = square[selectedY][selectedX];
                     square[selectedY][selectedX] = 0;     
+                    unmoved[selectedY][selectedX] = false;
 
                     if (SwingFrame.opponent != null)
                     {
