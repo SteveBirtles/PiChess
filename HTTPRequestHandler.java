@@ -74,7 +74,7 @@ public class HTTPRequestHandler extends AbstractHandler {
 
             if (request.getRequestURI().contains("set"))
             {
-                if (start != null && end != null) board.setSquare(setposition, setvalue, setunmoved.toLowerCase().equals("true"));
+                if (setposition != null && setunmoved != null) board.setSquare(setposition, setvalue, setunmoved.toLowerCase().equals("true"));
             }
 
         }

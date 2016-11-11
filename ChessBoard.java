@@ -41,7 +41,7 @@ public class ChessBoard extends JPanel implements ActionListener {
     {
         position = position.toUpperCase();
 
-        if (position.length() != 2) return;
+        if (position.length() != 2) return;        
 
         int x = position.charAt(0) - 65;
         int y = 7 - (position.charAt(1) - 49);
