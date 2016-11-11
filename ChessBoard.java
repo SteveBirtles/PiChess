@@ -32,6 +32,10 @@ public class ChessBoard extends JPanel implements ActionListener {
     private int cursorX = 0, cursorY = 0;
     private int selectedX = -1, selectedY;
     private double mouseX, mouseY;
+    private boolean showcoords;
+
+    private String columns[] = new String[] {"A", "B", "C", "D", "E", "F", "G", "H"};  
+    private String rows[] = new String[] {"8", "7", "6", "5", "4", "3", "2", "1"};
 
     public void doMove(String start, String end)
     {
@@ -126,8 +130,8 @@ public class ChessBoard extends JPanel implements ActionListener {
         mouseX = MouseInfo.getPointerInfo().getLocation().getX() - this.getLocationOnScreen().getX();
         mouseY = MouseInfo.getPointerInfo().getLocation().getY() - this.getLocationOnScreen().getY();        
 
-        if (mouseX > 64 && mouseX < 704 && mouseY > 64 && mouseY < 704) {
-            cursorX = (int) (mouseX - 64) / 80;
+        if (mouseX > 320 && mouseX < 960 && mouseY > 64 && mouseY < 704) {
+            cursorX = (int) (mouseX - 320) / 80;
             cursorY = (int) (mouseY - 64) / 80;
         }        
 
@@ -227,13 +231,19 @@ public class ChessBoard extends JPanel implements ActionListener {
                         g.setPaint(new Color(128,128,128));                
                 }
 
-                g.fillRect (64 + x * 80, 64 + y * 80, 80, 80);              
+                g.fillRect (320 + x * 80, 64 + y * 80, 80, 80);              
 
-                if (square[y][x] > 0) g.drawImage (sprite[square[y][x]], 64 + x * 80, 64 + y * 80, this);
+                if (showcoords)
+                {
+                    g.setPaint(new Color(192,192,192));
+                    g.drawString(columns[x] + rows[y], 322 + x * 80, 142 + y * 80);
+                }
+
+                if (square[y][x] > 0) g.drawImage (sprite[square[y][x]], 320 + x * 80, 64 + y * 80, this);
 
                 if (x == selectedX && y == selectedY)
                 {
-                    g.drawImage (sprite[0], 64 + x * 80, 64 + y * 80, this);
+                    g.drawImage (sprite[0], 320 + x * 80, 64 + y * 80, this);
                 }
 
                 if (moves[y][x] >= 0)
@@ -250,14 +260,8 @@ public class ChessBoard extends JPanel implements ActionListener {
 
                     if (square[y][x] == 0) g.setPaint(new Color(0,255,0));
                     else g.setPaint(new Color(255,0,0));
-                    g.fillOval(94 + x * 80, 94 + y * 80, 20, 20);
-                }
-
-                /*if (unmoved[y][x])
-                {
-                g.setPaint(new Color(255,255,0));                     
-                g.fillOval(94 + x * 80, 94 + y * 80, 20, 20);
-                }*/
+                    g.fillOval(350 + x * 80, 94 + y * 80, 20, 20);
+                }               
             }
         }
     }
@@ -276,11 +280,7 @@ public class ChessBoard extends JPanel implements ActionListener {
                     unmoved[selectedY][selectedX] = false;
 
                     if (SwingFrame.opponent != null)
-                    {
-
-                        String columns[] = new String[] {"A", "B", "C", "D", "E", "F", "G", "H"};  
-                        String rows[] = new String[] {"8", "7", "6", "5", "4", "3", "2", "1"};
-
+                    {                        
                         String start = columns[selectedX] + rows[selectedY];
                         String end = columns[cursorX] + rows[cursorY];
 
@@ -347,7 +347,11 @@ public class ChessBoard extends JPanel implements ActionListener {
             {
                 resetBoard();
             }
-            if (keycode == 'q' || keycode == 'Q') 
+            else if (keycode == 'c' || keycode == 'C') 
+            {
+                showcoords = !showcoords;
+            }
+            else if (keycode == 'q' || keycode == 'Q') 
             {
                 System.exit(0);
                 return;
