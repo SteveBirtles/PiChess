@@ -42,6 +42,9 @@ public class HTTPRequestHandler extends AbstractHandler {
 
             String start = null;
             String end = null;
+            String setposition = null;
+            int setvalue = 0;
+            String setunmoved = null;
 
             for(String q : request.getQueryString().split("&"))
             {
@@ -53,6 +56,10 @@ public class HTTPRequestHandler extends AbstractHandler {
 
                     if (variable.equals("start")) start = value;
                     if (variable.equals("end")) end = value;                    
+                    if (variable.equals("position")) setposition = value;
+                    try { if (variable.equals("value")) setvalue = Integer.parseInt(value); }
+                    catch (Exception ex) { System.out.println("Sync error - Can't convert " + value + " to integer."); }
+                    if (variable.equals("unmoved")) setunmoved = value;
                 }
                 else               
                 {
@@ -60,7 +67,16 @@ public class HTTPRequestHandler extends AbstractHandler {
                 }
             }
 
-            if (start != null && end != null) board.doMove(start, end);
+            if (request.getRequestURI().contains("move"))
+            {
+                if (start != null && end != null) board.doMove(start, end);
+            }
+
+            if (request.getRequestURI().contains("set"))
+            {
+                if (start != null && end != null) board.setSquare(setposition, setvalue, setunmoved.toLowerCase().equals("true"));
+            }
+
         }
         else
         {

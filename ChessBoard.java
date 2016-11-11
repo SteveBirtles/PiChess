@@ -37,6 +37,23 @@ public class ChessBoard extends JPanel implements ActionListener {
     private String columns[] = new String[] {"A", "B", "C", "D", "E", "F", "G", "H"};  
     private String rows[] = new String[] {"8", "7", "6", "5", "4", "3", "2", "1"};
 
+    public void setSquare(String position, int value, boolean isunmoved)
+    {
+        position = position.toUpperCase();
+
+        if (position.length() != 2) return;
+
+        int x = position.charAt(0) - 65;
+        int y = 7 - (position.charAt(1) - 49);
+
+        if (x < 0 || x > 7) return;
+        if (y < 0 || y > 7) return;
+
+        square[y][x] = value;
+        unmoved[y][x] = isunmoved;
+
+    }
+
     public void doMove(String start, String end)
     {
 
@@ -266,6 +283,40 @@ public class ChessBoard extends JPanel implements ActionListener {
         }
     }
 
+    public void forceSync()
+    {
+        URL url;
+        HttpURLConnection con;
+        int responseCode;
+
+        if (SwingFrame.opponent == null) return;
+        {
+            for (int x = 0; x < 8; x++)
+            {
+                for (int y = 0; y < 8; y++)
+                {
+                    String position = columns[x] + rows[y];
+
+                    try
+                    {
+                        url = new URL( "http://" + SwingFrame.opponent + "/set?position=" + position + "&value=" + square[y][x] + "&unmoved=" + unmoved[y][x]);                        
+                        con = (HttpURLConnection) url.openConnection();
+                        con.setRequestMethod("GET");
+                        responseCode = con.getResponseCode();
+                        System.out.println("HTTP GET URL: " + url + ", Response Code: " + responseCode);
+                    }
+                    catch (Exception ex)
+                    {
+                        System.out.println("HTTP GET ERROR: " + ex.getMessage());
+                    }
+
+                }
+
+            }
+        }
+
+    }
+
     public void processClick()
     {
         if (selectedX >= 0)
@@ -350,6 +401,10 @@ public class ChessBoard extends JPanel implements ActionListener {
             else if (keycode == 'c' || keycode == 'C') 
             {
                 showcoords = !showcoords;
+            }
+            else if (keycode == 'f' || keycode == 'F') 
+            {
+                forceSync();
             }
             else if (keycode == 'q' || keycode == 'Q') 
             {
